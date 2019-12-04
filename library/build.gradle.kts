@@ -18,7 +18,7 @@ android {
         minSdkVersion(21)
         targetSdkVersion(29)
         versionCode = 1
-        versionName = "1.0"
+        versionName = version as String
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
@@ -65,6 +65,26 @@ android {
     }
 }
 
+val sourcesJar by tasks.creating(Jar::class) {
+    archiveClassifier.set("sources")
+    from(android.sourceSets["main"].java.srcDirs)
+}
+
+val javadoc by tasks.creating(Javadoc::class) {
+    source(android.sourceSets["main"].java.srcDirs)
+    classpath += project.files(android.bootClasspath.joinToString(File.pathSeparator))
+}
+
+val javadocJar by tasks.creating(Jar::class) {
+    archiveClassifier.set("javadoc")
+    from(javadoc.destinationDir)
+}
+
+artifacts {
+    archives(sourcesJar)
+    archives(javadocJar)
+}
+
 dependencies {
     implementation("io.maryk.lz4:lz4-android:1.9.2")
     androidTestImplementation(kotlin("stdlib-jdk7", KotlinCompilerVersion.VERSION))
@@ -72,48 +92,69 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")
 }
 
-publishing {
-    publications {
-        register<MavenPublication>("RocksDB-Android").configure {
-            artifact("$buildDir/outputs/aar/library-release.aar")
-            groupId = project.group as String
-            artifactId = "rocksdb-android"
-            version = project.version as String
+afterEvaluate {
+    val publishTasks = mutableListOf<Jar>()
 
-            //The publication doesn't know about our dependencies, so we have to manually add them to the pom
-            pom.withXml {
-                val dependenciesNode = asNode().appendNode("dependencies")
+    android.libraryVariants.all { variant ->
+        val name = variant.buildType.name
+        if (name != com.android.builder.core.BuilderConstants.DEBUG) {
+            val task = project.tasks.create<Jar>("jar${name.capitalize()}") {
+                dependsOn(variant.javaCompileProvider)
+                dependsOn(variant.externalNativeBuildProviders)
+                from(variant.javaCompileProvider.get().destinationDir)
+                from("${buildDir.absolutePath}/intermediates/library_and_local_jars_jni/$name") {
+                    include("**/*.so")
+                    into("lib")
+                }
+            }
+            publishTasks.add(task)
+            artifacts.add("archives", task)
+        }
+        true
+    }
 
-                //Iterate over the compile dependencies (we don't want the test ones), adding a <dependency> node for each
-                configurations.implementation.get().allDependencies.forEach {
-                    dependenciesNode.appendNode ("dependency").apply {
-                        appendNode("groupId", it.group)
-                        appendNode("artifactId", it.name)
-                        appendNode("version", it.version)
+    publishing {
+        publications {
+            register<MavenPublication>("RocksDB-Android").configure {
+                artifact(sourcesJar)
+                artifact(javadocJar)
+                publishTasks.forEach(::artifact)
+                groupId = project.group as String
+                artifactId = "rocksdb-android"
+                version = project.version as String
+
+                //The publication doesn't know about our dependencies, so we have to manually add them to the pom
+                pom.withXml {
+                    val dependenciesNode = asNode().appendNode("dependencies")
+
+                    //Iterate over the compile dependencies (we don't want the test ones), adding a <dependency> node for each
+                    configurations.implementation.get().allDependencies.forEach {
+                        dependenciesNode.appendNode ("dependency").apply {
+                            appendNode("groupId", it.group)
+                            appendNode("artifactId", it.name)
+                            appendNode("version", it.version)
+                        }
                     }
                 }
             }
         }
     }
-}
 
+    fun findProperty(s: String) = project.findProperty(s) as String?
+    bintray {
+        user = findProperty("bintrayUser")
+        key = findProperty("bintrayApiKey")
+        publish = true
+        pkg(delegateClosureOf<BintrayExtension.PackageConfig> {
+            repo = "maven"
+            name = "rocksdb-android"
+            userOrg = "maryk"
+            setLicenses("Apache-2.0")
+            setPublications(*project.publishing.publications.names.toTypedArray())
+            vcsUrl = "https://github.com/marykdb/rocksdb-android.git"
+        })
+    }
 
-fun findProperty(s: String) = project.findProperty(s) as String?
-bintray {
-    user = findProperty("bintrayUser")
-    key = findProperty("bintrayApiKey")
-    publish = true
-    pkg(delegateClosureOf<BintrayExtension.PackageConfig> {
-        repo = "maven"
-        name = "rocksdb-android"
-        userOrg = "maryk"
-        setLicenses("Apache-2.0")
-        setPublications(*project.publishing.publications.names.toTypedArray())
-        vcsUrl = "https://github.com/marykdb/rocksdb-android.git"
-    })
-}
-
-afterEvaluate {
     project.publishing.publications.withType<MavenPublication>().forEach { publication ->
         publication.pom.withXml {
             asNode().apply {
