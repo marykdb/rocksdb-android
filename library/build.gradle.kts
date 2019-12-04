@@ -1,6 +1,4 @@
 import com.jfrog.bintray.gradle.BintrayExtension
-import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
-import org.gradle.api.publish.maven.internal.artifact.FileBasedMavenArtifact
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 
 plugins {
@@ -11,7 +9,7 @@ plugins {
 }
 
 group = "io.maryk.rocksdb"
-version = "0.5.0"
+version = "0.6.0"
 
 android {
     compileSdkVersion(29)
@@ -68,9 +66,35 @@ android {
 }
 
 dependencies {
+    implementation("io.maryk.lz4:lz4-android:1.9.2")
     androidTestImplementation(kotlin("stdlib-jdk7", KotlinCompilerVersion.VERSION))
     androidTestImplementation("androidx.test.ext:junit:1.1.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")
+}
+
+publishing {
+    publications {
+        register<MavenPublication>("RocksDB-Android").configure {
+            artifact("$buildDir/outputs/aar/library-release.aar")
+            groupId = project.group as String
+            artifactId = "rocksdb-android"
+            version = project.version as String
+
+            //The publication doesn't know about our dependencies, so we have to manually add them to the pom
+            pom.withXml {
+                val dependenciesNode = asNode().appendNode("dependencies")
+
+                //Iterate over the compile dependencies (we don't want the test ones), adding a <dependency> node for each
+                configurations.implementation.get().allDependencies.forEach {
+                    dependenciesNode.appendNode ("dependency").apply {
+                        appendNode("groupId", it.group)
+                        appendNode("artifactId", it.name)
+                        appendNode("version", it.version)
+                    }
+                }
+            }
+        }
+    }
 }
 
 
@@ -87,22 +111,6 @@ bintray {
         setPublications(*project.publishing.publications.names.toTypedArray())
         vcsUrl = "https://github.com/marykdb/rocksdb-android.git"
     })
-}
-
-// https://github.com/bintray/gradle-bintray-plugin/issues/229
-tasks.withType<BintrayUploadTask> {
-    doFirst {
-        publishing.publications
-            .filterIsInstance<MavenPublication>()
-            .forEach { publication ->
-                val moduleFile = buildDir.resolve("publications/${publication.name}/module.json")
-                if (moduleFile.exists()) {
-                    publication.artifact(object : FileBasedMavenArtifact(moduleFile) {
-                        override fun getDefaultExtension() = "module"
-                    })
-                }
-            }
-    }
 }
 
 afterEvaluate {
