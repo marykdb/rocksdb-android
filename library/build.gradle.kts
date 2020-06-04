@@ -13,7 +13,7 @@ version = "6.8.1"
 
 android {
     compileSdkVersion(29)
-    buildToolsVersion("29.0.0")
+    buildToolsVersion("29.0.3")
     defaultConfig {
         minSdkVersion(21)
         targetSdkVersion(29)
@@ -35,7 +35,7 @@ android {
                         "-Wno-error"
                     )
                 )
-                targets += "rocksdbjni"
+                targets.add("rocksdbjni")
             }
         }
     }
