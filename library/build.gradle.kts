@@ -1,22 +1,24 @@
-import com.jfrog.bintray.gradle.BintrayExtension
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.tasks.bundling.Jar
+import java.util.*
 
 plugins {
     id("com.android.library")
     id("maven-publish")
+    id("signing")
     id("kotlin-android")
-    id("com.jfrog.bintray").version("1.8.4")
 }
 
 group = "io.maryk.rocksdb"
-version = "6.8.1"
+version = "6.11.4"
 
 android {
-    compileSdkVersion(29)
-    buildToolsVersion("29.0.3")
+    compileSdkVersion(30)
+    buildToolsVersion("30.0.3")
     defaultConfig {
         minSdkVersion(21)
-        targetSdkVersion(29)
+        targetSdkVersion(30)
         versionCode = 1
         versionName = version as String
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -47,8 +49,8 @@ android {
     }
     externalNativeBuild {
         cmake {
-            setPath("../rocksdb/CMakeLists.txt")
-            setVersion("3.10.2")
+            path = File("$projectDir/../rocksdb/CMakeLists.txt")
+            version = "3.18.1"
         }
     }
     compileOptions {
@@ -60,7 +62,7 @@ android {
             java.srcDirs("../rocksdb/java/src/main/java")
         }
         val androidTest by getting {
-            java.srcDirs("src/androidTest/java")
+            java.srcDirs("src/androidTest/kotlin")
         }
     }
 }
@@ -86,11 +88,38 @@ artifacts {
 }
 
 dependencies {
-    implementation("io.maryk.lz4:lz4-android:1.9.2")
-    androidTestImplementation(kotlin("stdlib-jdk7", KotlinCompilerVersion.VERSION))
-    androidTestImplementation("androidx.test.ext:junit:1.1.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")
+    implementation("io.maryk.lz4:lz4-android:1.9.3")
+    androidTestImplementation(kotlin("stdlib-jdk8", KotlinCompilerVersion.VERSION))
+    androidTestImplementation("androidx.test.ext:junit:1.1.2")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.3.0")
 }
+
+// Stub secrets to let the project sync and build without the publication values set up
+ext["signing.keyId"] = null
+ext["signing.password"] = null
+ext["signing.secretKeyRingFile"] = null
+ext["ossrhUsername"] = null
+ext["ossrhPassword"] = null
+
+// Grabbing secrets from local.properties file or from environment variables, which could be used on CI
+val secretPropsFile = project.rootProject.file("local.properties")
+if (secretPropsFile.exists()) {
+    secretPropsFile.reader().use {
+        Properties().apply {
+            load(it)
+        }
+    }.onEach { (name, value) ->
+        ext[name.toString()] = value
+    }
+} else {
+    ext["signing.keyId"] = System.getenv("SIGNING_KEY_ID")
+    ext["signing.password"] = System.getenv("SIGNING_PASSWORD")
+    ext["signing.secretKeyRingFile"] = System.getenv("SIGNING_SECRET_KEY_RING_FILE")
+    ext["ossrhUsername"] = System.getenv("OSSRH_USERNAME")
+    ext["ossrhPassword"] = System.getenv("OSSRH_PASSWORD")
+}
+
+fun getExtraString(name: String) = ext[name]?.toString()
 
 afterEvaluate {
     val publishTasks = mutableListOf<Jar>()
@@ -114,6 +143,17 @@ afterEvaluate {
     }
 
     publishing {
+        repositories {
+            maven {
+                name = "sonatype"
+                setUrl("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+                credentials {
+                    username = getExtraString("ossrhUsername")
+                    password = getExtraString("ossrhPassword")
+                }
+            }
+        }
+
         publications {
             register<MavenPublication>("RocksDB-Android").configure {
                 artifact(sourcesJar)
@@ -138,46 +178,34 @@ afterEvaluate {
                 }
             }
         }
-    }
 
-    fun findProperty(s: String) = project.findProperty(s) as String?
-    bintray {
-        user = findProperty("bintrayUser")
-        key = findProperty("bintrayApiKey")
-        publish = true
-        pkg(delegateClosureOf<BintrayExtension.PackageConfig> {
-            repo = "maven"
-            name = "rocksdb-android"
-            userOrg = "maryk"
-            setLicenses("Apache-2.0")
-            setPublications(*project.publishing.publications.names.toTypedArray())
-            vcsUrl = "https://github.com/marykdb/rocksdb-android.git"
-        })
-    }
+        publications.withType<MavenPublication> {
+            pom {
+                name.set(project.name)
+                description.set("Android RocksDB library")
+                url.set("https://github.com/marykdb/rocksdb-android")
 
-    project.publishing.publications.withType<MavenPublication>().forEach { publication ->
-        publication.pom.withXml {
-            asNode().apply {
-                appendNode("name", project.name)
-                appendNode("description", "Android RocksDB library")
-                appendNode("url", "https://github.com/marykdb/rocksdb-android")
-                appendNode("licenses").apply {
-                    appendNode("license").apply {
-                        appendNode("name", "The Apache Software License, Version 2.0")
-                        appendNode("url", "http://www.apache.org/licenses/LICENSE-2.0.txt")
-                        appendNode("distribution", "repo")
+                licenses {
+                    license {
+                        name.set("The Apache Software License, Version 2.0")
+                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                        distribution.set("repo")
                     }
                 }
-                appendNode("developers").apply {
-                    appendNode("developer").apply {
-                        appendNode("id", "jurmous")
-                        appendNode("name", "Jurriaan Mous")
+                developers {
+                    developer {
+                        id.set("jurmous")
+                        name.set("Jurriaan Mous")
                     }
                 }
-                appendNode("scm").apply {
-                    appendNode("url", "https://github.com/marykdb/rocksdb-android.git")
+                scm {
+                    url.set("https://github.com/marykdb/rocksdb-android.git")
                 }
             }
         }
+    }
+
+    signing {
+        sign(publishing.publications)
     }
 }

@@ -1,4 +1,5 @@
-[ ![Download](https://api.bintray.com/packages/maryk/maven/rocksdb-android/images/download.svg?version=0.6.0) ](https://bintray.com/maryk/maven/rocksdb-android/0.6.0/link)
+[![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](https://www.apache.org/licenses/LICENSE-2.0)
+[![Download](https://img.shields.io/maven-central/v/io.maryk.rocksdb/rocksdb-android)](https://search.maven.org/artifact/io.maryk.rocksdb/rocksdb-android)
 
 # RocksDB for Android
 
@@ -12,9 +13,9 @@ as the regular RocksDB java release
 
 ## Maven dependency
 
-The project is published on the jcenter repository. 
+The project is published on Maven Central. 
 
 Gradle:
 ```kts
-implementation("io.maryk.rocksdb:rocksdb-android:0.6.0")
+implementation("io.maryk.rocksdb:rocksdb-android:6.11.4")
 ```
