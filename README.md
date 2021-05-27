@@ -17,5 +17,5 @@ The project is published on Maven Central.
 
 Gradle:
 ```kts
-implementation("io.maryk.rocksdb:rocksdb-android:6.11.4")
+implementation("io.maryk.rocksdb:rocksdb-android:6.20.4")
 ```
