@@ -11,16 +11,14 @@ plugins {
 }
 
 group = "io.maryk.rocksdb"
-version = "6.20.4"
+version = "6.20.4-2"
 
 android {
-    compileSdkVersion(30)
-    buildToolsVersion("30.0.3")
+    compileSdk = 30
+    buildToolsVersion = "30.0.3"
     defaultConfig {
-        minSdkVersion(21)
-        targetSdkVersion(30)
-        versionCode = 1
-        versionName = version as String
+        minSdk = 21
+        targetSdk = 30
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
@@ -58,10 +56,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
     sourceSets {
-        val main by getting {
+        this["main"].run {
             java.srcDirs("../rocksdb/java/src/main/java")
         }
-        val androidTest by getting {
+        this["androidTest"].run {
             java.srcDirs("src/androidTest/kotlin")
         }
     }
@@ -88,10 +86,10 @@ artifacts {
 }
 
 dependencies {
-    implementation("io.maryk.lz4:lz4-android:1.9.3")
+    implementation("io.maryk.lz4:lz4-android:1.9.3-2")
     androidTestImplementation(kotlin("stdlib-jdk8", KotlinCompilerVersion.VERSION))
-    androidTestImplementation("androidx.test.ext:junit:1.1.2")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.3.0")
+    androidTestImplementation("androidx.test.ext:junit:1.1.3")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
 }
 
 // Stub secrets to let the project sync and build without the publication values set up
@@ -130,8 +128,8 @@ afterEvaluate {
             val task = project.tasks.create<Jar>("jar${name.capitalize()}") {
                 dependsOn(variant.javaCompileProvider)
                 dependsOn(variant.externalNativeBuildProviders)
-                from(variant.javaCompileProvider.get().destinationDir)
-                from("${buildDir.absolutePath}/intermediates/library_and_local_jars_jni/$name") {
+                from(variant.javaCompileProvider.get().destinationDirectory)
+                from("${buildDir.absolutePath}/intermediates/library_and_local_jars_jni/$name/jni") {
                     include("**/*.so")
                     into("lib")
                 }
