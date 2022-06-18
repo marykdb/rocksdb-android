@@ -14,11 +14,11 @@ group = "io.maryk.rocksdb"
 version = "7.0.3"
 
 android {
-    compileSdk = 31
-    buildToolsVersion = "30.0.3"
+    compileSdk = 32
+    buildToolsVersion = "32.0.0"
     defaultConfig {
         minSdk = 21
-        targetSdk = 31
+        targetSdk = 32
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
