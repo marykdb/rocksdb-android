@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "io.maryk.rocksdb"
-version = "7.0.3"
+version = "7.3.1"
 
 android {
     compileSdk = 32
