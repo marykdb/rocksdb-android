@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.Jar
@@ -14,11 +16,11 @@ group = "io.maryk.rocksdb"
 version = "7.3.1"
 
 android {
-    compileSdk = 32
-    buildToolsVersion = "32.0.0"
+    compileSdk = 33
+    buildToolsVersion = "33.0.0"
     defaultConfig {
         minSdk = 21
-        targetSdk = 32
+        targetSdk = 33
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
@@ -86,10 +88,9 @@ artifacts {
 }
 
 dependencies {
-    implementation("io.maryk.lz4:lz4-android:1.9.3-2")
+    implementation("io.maryk.lz4:lz4-android:1.9.4")
     androidTestImplementation(kotlin("stdlib-jdk8", KotlinCompilerVersion.VERSION))
-    androidTestImplementation("androidx.test.ext:junit:1.1.3")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
 }
 
 // Stub secrets to let the project sync and build without the publication values set up
