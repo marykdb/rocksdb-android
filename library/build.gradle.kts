@@ -1,5 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
+import com.android.build.gradle.tasks.BundleAar
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.Jar
@@ -121,12 +122,12 @@ if (secretPropsFile.exists()) {
 fun getExtraString(name: String) = ext[name]?.toString()
 
 afterEvaluate {
-    val publishTasks = mutableListOf<Jar>()
+    val publishTasks = mutableListOf<BundleAar>()
 
     android.libraryVariants.all { variant ->
         val name = variant.buildType.name
         if (name != com.android.builder.core.BuilderConstants.DEBUG) {
-            val task = project.tasks.create<Jar>("jar${name.capitalize()}") {
+            val task = project.tasks.getByName<BundleAar>("bundle${name.capitalize()}Aar") {
                 dependsOn(variant.javaCompileProvider)
                 dependsOn(variant.externalNativeBuildProviders)
                 from(variant.javaCompileProvider.get().destinationDirectory)
