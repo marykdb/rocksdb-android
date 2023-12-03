@@ -4,6 +4,7 @@ import com.android.build.gradle.tasks.BundleAar
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.Jar
+import org.gradle.kotlin.dsl.support.uppercaseFirstChar
 import java.util.*
 
 plugins {
@@ -14,14 +15,13 @@ plugins {
 }
 
 group = "io.maryk.rocksdb"
-version = "8.0.0"
+version = "8.8.1"
 
 android {
+    namespace = "org.rocksdb"
     compileSdk = 33
-    buildToolsVersion = "33.0.0"
     defaultConfig {
         minSdk = 21
-        targetSdk = 33
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
@@ -51,7 +51,7 @@ android {
     externalNativeBuild {
         cmake {
             path = File("$projectDir/../rocksdb/CMakeLists.txt")
-            version = "3.18.1"
+            version = "3.19.1"
         }
     }
     compileOptions {
@@ -127,11 +127,11 @@ afterEvaluate {
     android.libraryVariants.all { variant ->
         val name = variant.buildType.name
         if (name != com.android.builder.core.BuilderConstants.DEBUG) {
-            val task = project.tasks.getByName<BundleAar>("bundle${name.capitalize()}Aar") {
+            val task = project.tasks.getByName<BundleAar>("bundle${name.uppercaseFirstChar()}Aar") {
                 dependsOn(variant.javaCompileProvider)
                 dependsOn(variant.externalNativeBuildProviders)
                 from(variant.javaCompileProvider.get().destinationDirectory)
-                from("${buildDir.absolutePath}/intermediates/library_and_local_jars_jni/$name/jni") {
+                from("${layout.buildDirectory.asFile.get().absolutePath}/intermediates/library_and_local_jars_jni/$name/jni") {
                     include("**/*.so")
                     into("lib")
                 }
