@@ -15,11 +15,11 @@ plugins {
 }
 
 group = "io.maryk.rocksdb"
-version = "8.8.1"
+version = "9.5.2"
 
 android {
     namespace = "org.rocksdb"
-    compileSdk = 33
+    compileSdk = 35
     defaultConfig {
         minSdk = 21
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
