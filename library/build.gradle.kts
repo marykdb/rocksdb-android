@@ -15,7 +15,7 @@ plugins {
 }
 
 group = "io.maryk.rocksdb"
-version = "9.5.2"
+version = "9.6.1"
 
 android {
     namespace = "org.rocksdb"
@@ -89,7 +89,7 @@ artifacts {
 }
 
 dependencies {
-    implementation("io.maryk.lz4:lz4-android:1.9.4")
+    implementation("io.maryk.lz4:lz4-android:1.10.0")
     androidTestImplementation(kotlin("stdlib-jdk8", KotlinCompilerVersion.VERSION))
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
 }
