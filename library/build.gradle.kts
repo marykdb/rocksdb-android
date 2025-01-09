@@ -15,7 +15,7 @@ plugins {
 }
 
 group = "io.maryk.rocksdb"
-version = "9.6.1"
+version = "9.7.3"
 
 android {
     namespace = "org.rocksdb"
@@ -51,7 +51,7 @@ android {
     externalNativeBuild {
         cmake {
             path = File("$projectDir/../rocksdb/CMakeLists.txt")
-            version = "3.19.1"
+            version = "3.31.3"
         }
     }
     compileOptions {
