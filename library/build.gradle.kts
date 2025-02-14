@@ -15,7 +15,7 @@ plugins {
 }
 
 group = "io.maryk.rocksdb"
-version = "9.8.4"
+version = "9.10.0"
 
 android {
     namespace = "org.rocksdb"
@@ -28,6 +28,7 @@ android {
                 arguments.addAll(
                     arrayOf(
                         "-DWITH_GFLAGS=NO",
+                        "-DCMAKE_SYSTEM_NAME=Android",
                         "-DCMAKE_POSITION_INDEPENDENT_CODE=ON",
                         "-DWITH_TESTS=OFF",
                         "-DANDROID_STL=c++_shared",
