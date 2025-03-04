@@ -1,7 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
 import com.android.build.gradle.tasks.BundleAar
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.kotlin.dsl.support.uppercaseFirstChar
@@ -33,6 +32,11 @@ android {
                         "-DWITH_TESTS=OFF",
                         "-DANDROID_STL=c++_shared",
                         "-DPORTABLE=ON",
+                        "-DWITH_ZLIB=ON",
+                        "-DWITH_LZ4=ON",
+//                        "-DWITH_ZSTD=ON",
+//                        "-DWITH_SNAPPY=ON",
+//                        "-DWITH_BZ2=ON",
                         "-DWITH_TESTS=OFF",
                         "-DWITH_TOOLS=OFF",
                         "-DWITH_JNI=ON",
@@ -51,13 +55,16 @@ android {
     }
     externalNativeBuild {
         cmake {
-            path = File("$projectDir/../rocksdb/CMakeLists.txt")
+            path = File("$projectDir/CMakeLists.txt")
             version = "3.31.3"
         }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
     sourceSets {
         this["main"].run {
@@ -90,9 +97,17 @@ artifacts {
 }
 
 dependencies {
-    implementation("io.maryk.lz4:lz4-android:1.10.0")
-    androidTestImplementation(kotlin("stdlib-jdk8", KotlinCompilerVersion.VERSION))
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test:runner:1.6.2")
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+}
+
+tasks.whenTaskAdded {
+    if(name.startsWith("configureCMakeDebug")) {
+        dependsOn(":lz4:copyReleaseJniLibsProjectAndLocalJars")
+    }
+    if(name.startsWith("configureCMakeRelease")) {
+        dependsOn(":lz4:copyReleaseJniLibsProjectAndLocalJars")
+    }
 }
 
 // Stub secrets to let the project sync and build without the publication values set up

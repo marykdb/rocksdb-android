@@ -13,3 +13,5 @@
 .externalNativeBuild
 .cxx
 library/build
+lz4/lz4
+lz4/build
