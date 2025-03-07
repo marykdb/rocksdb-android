@@ -35,7 +35,7 @@ android {
                         "-DWITH_ZLIB=ON",
                         "-DWITH_LZ4=ON",
 //                        "-DWITH_ZSTD=ON",
-//                        "-DWITH_SNAPPY=ON",
+                        "-DWITH_SNAPPY=ON",
 //                        "-DWITH_BZ2=ON",
                         "-DWITH_TESTS=OFF",
                         "-DWITH_TOOLS=OFF",
@@ -102,11 +102,9 @@ dependencies {
 }
 
 tasks.whenTaskAdded {
-    if(name.startsWith("configureCMakeDebug")) {
+    if(name.startsWith("configureCMake")) {
         dependsOn(":lz4:copyReleaseJniLibsProjectAndLocalJars")
-    }
-    if(name.startsWith("configureCMakeRelease")) {
-        dependsOn(":lz4:copyReleaseJniLibsProjectAndLocalJars")
+        dependsOn(":snappy:copyReleaseJniLibsProjectAndLocalJars")
     }
 }
 

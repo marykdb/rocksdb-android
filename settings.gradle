@@ -1,3 +1,4 @@
 include ':lz4'
+include ':snappy'
 include ':library'
 rootProject.name='rocksdb-android'

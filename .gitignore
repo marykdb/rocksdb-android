@@ -15,3 +15,7 @@
 library/build
 lz4/lz4
 lz4/build
+/snappy/snappy-*/
+/snappy/*.tar.gz
+/snappy/build/
+/snappy/include/
