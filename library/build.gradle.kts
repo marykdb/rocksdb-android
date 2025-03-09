@@ -36,7 +36,7 @@ android {
                         "-DWITH_LZ4=ON",
 //                        "-DWITH_ZSTD=ON",
                         "-DWITH_SNAPPY=ON",
-//                        "-DWITH_BZ2=ON",
+                        "-DWITH_BZ2=ON",
                         "-DWITH_TESTS=OFF",
                         "-DWITH_TOOLS=OFF",
                         "-DWITH_JNI=ON",
@@ -105,6 +105,7 @@ tasks.whenTaskAdded {
     if(name.startsWith("configureCMake")) {
         dependsOn(":lz4:copyReleaseJniLibsProjectAndLocalJars")
         dependsOn(":snappy:copyReleaseJniLibsProjectAndLocalJars")
+        dependsOn(":bz2:copyReleaseJniLibsProjectAndLocalJars")
     }
 }
 

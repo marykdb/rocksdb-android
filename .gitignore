@@ -19,3 +19,5 @@ lz4/build
 /snappy/*.tar.gz
 /snappy/build/
 /snappy/include/
+/bz2/bzip2-*/
+/bz2/build/

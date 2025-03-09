@@ -10,6 +10,9 @@ set(Snappy_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../snappy/snappy-1.2.1")
 set(Snappy_DIR "${Snappy_ROOT_DIR}")
 set(Snappy_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/../snappy/build/intermediates/library_and_local_jars_jni/release/copyReleaseJniLibsProjectAndLocalJars/jni/${ANDROID_ABI}/libsnappy.so")
 
+set(BZIP2_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../bz2/bzip2-1.0.8")
+set(BZIP2_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/../bz2/build/intermediates/library_and_local_jars_jni/release/copyReleaseJniLibsProjectAndLocalJars/jni/${ANDROID_ABI}/libbz2.so")
+
 include_directories(${lz4_ROOT_DIR}/lib)
 include_directories(${Snappy_ROOT_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../snappy/include)
