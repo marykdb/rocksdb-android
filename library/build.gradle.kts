@@ -34,7 +34,7 @@ android {
                         "-DPORTABLE=ON",
                         "-DWITH_ZLIB=ON",
                         "-DWITH_LZ4=ON",
-//                        "-DWITH_ZSTD=ON",
+                        "-DWITH_ZSTD=ON",
                         "-DWITH_SNAPPY=ON",
                         "-DWITH_BZ2=ON",
                         "-DWITH_TESTS=OFF",
@@ -106,6 +106,7 @@ tasks.whenTaskAdded {
         dependsOn(":lz4:copyReleaseJniLibsProjectAndLocalJars")
         dependsOn(":snappy:copyReleaseJniLibsProjectAndLocalJars")
         dependsOn(":bz2:copyReleaseJniLibsProjectAndLocalJars")
+        dependsOn(":zstd:copyReleaseJniLibsProjectAndLocalJars")
     }
 }
 

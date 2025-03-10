@@ -16,7 +16,7 @@ if [ ! -d "${TARGET_DIR}" ]; then
     echo "Downloading bzip2 ${BZIP2_VERSION} ..."
     TMP_FILE=$(mktemp)
     URL="http://sourceware.org/pub/bzip2/bzip2-${BZIP2_VERSION}.tar.gz"
-    curl -L "$URL" -o "$TMP_FILE"
+    curl -s -L "$URL" -o "$TMP_FILE"
 
     echo "Verifying bzip2-${BZIP2_VERSION}..."
     sha256_actual="$(shasum -a 256 "${TMP_FILE}" | awk '{print $1}')"

@@ -1,5 +1,6 @@
-include ':lz4'
 include ':bz2'
+include ':lz4'
 include ':snappy'
+include ':zstd'
 include ':library'
 rootProject.name='rocksdb-android'

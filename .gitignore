@@ -21,3 +21,5 @@ lz4/build
 /snappy/include/
 /bz2/bzip2-*/
 /bz2/build/
+/zstd/zstd-*/
+/zstd/build/

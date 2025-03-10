@@ -31,6 +31,19 @@ class RocksDBBasicTest {
         assertEquals("value", db.get("key".encodeToByteArray()).decodeToString())
     }
 
+
+    @Test
+    fun openDBWriteAndReadValueLZ4HC() {
+        val dir = Files.createTempDirectory("rocksdb-lz4hc")
+        val options = Options().apply {
+            setCreateIfMissing(true)
+            setCompressionType(CompressionType.LZ4HC_COMPRESSION)
+        }
+        val db = RocksDB.open(options, dir.toUri().path)
+        assertEquals(dir.toUri().path, db.name)
+        db.put("key".encodeToByteArray(), "value".encodeToByteArray())
+        assertEquals("value", db.get("key".encodeToByteArray()).decodeToString())
+    }
     @Test
     fun openDBWriteAndReadValueZLib() {
         val dir = Files.createTempDirectory("rocksdb-zlib")
@@ -59,10 +72,23 @@ class RocksDBBasicTest {
 
     @Test
     fun openDBWriteAndReadValueBz2() {
-        val dir = Files.createTempDirectory("rocksdb-snappy")
+        val dir = Files.createTempDirectory("rocksdb-bz2")
         val options = Options().apply {
             setCreateIfMissing(true)
             setCompressionType(CompressionType.BZLIB2_COMPRESSION)
+        }
+        val db = RocksDB.open(options, dir.toUri().path)
+        assertEquals(dir.toUri().path, db.name)
+        db.put("key".encodeToByteArray(), "value".encodeToByteArray())
+        assertEquals("value", db.get("key".encodeToByteArray()).decodeToString())
+    }
+
+    @Test
+    fun openDBWriteAndReadValueZstd() {
+        val dir = Files.createTempDirectory("rocksdb-zstd")
+        val options = Options().apply {
+            setCreateIfMissing(true)
+            setCompressionType(CompressionType.ZSTD_COMPRESSION)
         }
         val db = RocksDB.open(options, dir.toUri().path)
         assertEquals(dir.toUri().path, db.name)
