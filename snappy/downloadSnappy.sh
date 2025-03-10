@@ -13,8 +13,9 @@ SNAPPY_DOWNLOAD_BASE="${SNAPPY_DOWNLOAD_BASE:-$DEFAULT_SNAPPY_DOWNLOAD_BASE}"
 tarball="${SNAPPY_VER}.tar.gz"
 target_path="snappy-${SNAPPY_VER}"
 
-if [ ! -d "$target_path" ]; then
-    mkdir "$target_path"
+if [ -d "${target_path}" ]; then
+    echo "snappy ${SNAPPY_VER} has already been downloaded!"
+    exit 0
 fi
 
 echo "Downloading snappy-${SNAPPY_VER}..."
@@ -32,4 +33,5 @@ else
     exit 1
 fi
 
-tar xzf "${tarball}" -C "./"  > /dev/null
+tar xzf "${tarball}" -C "./" > /dev/null
+echo "snappy ${SNAPPY_VER} downloaded and extracted successfully!"
