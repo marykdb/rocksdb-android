@@ -13,6 +13,7 @@ class RocksDBBasicTest {
     fun openDBWriteAndReadValue() {
         val dir = Files.createTempDirectory("rocksdb")
         val db = RocksDB.open(dir.toUri().path)
+        assertEquals(CompressionType.SNAPPY_COMPRESSION, db.options.compressionType())
         assertEquals(dir.toUri().path, db.name)
         db.put("key".encodeToByteArray(), "value".encodeToByteArray())
         assertEquals("value", db.get("key".encodeToByteArray()).decodeToString())
