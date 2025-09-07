@@ -13,7 +13,7 @@ val lz4Home = projectDir.resolve("lz4/lz4-$lz4Version")
 
 android {
     namespace = "lz4"
-    compileSdk = 35
+    compileSdk = 36
     defaultConfig {
         minSdk = 21
         externalNativeBuild {

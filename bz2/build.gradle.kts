@@ -14,7 +14,7 @@ val bz2Home = projectDir.resolve("bzip2-$bz2Version")
 
 android {
     namespace = "bz2"
-    compileSdk = 35
+    compileSdk = 36
     defaultConfig {
         minSdk = 21
         externalNativeBuild {
