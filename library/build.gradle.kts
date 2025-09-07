@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "io.maryk.rocksdb"
-version = "9.10.1"
+version = "10.4.2"
 
 android {
     namespace = "org.rocksdb"
