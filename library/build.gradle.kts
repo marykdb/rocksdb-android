@@ -1,16 +1,9 @@
 @file:Suppress("UnstableApiUsage")
 
-import com.android.build.gradle.tasks.BundleAar
-import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.tasks.bundling.Jar
-import org.gradle.kotlin.dsl.support.uppercaseFirstChar
-import java.util.*
-
 plugins {
     id("com.android.library")
-    id("maven-publish")
-    id("signing")
     id("kotlin-android")
+    id("com.vanniktech.maven.publish") version "0.34.0"
 }
 
 group = "io.maryk.rocksdb"
@@ -76,26 +69,6 @@ android {
     }
 }
 
-val sourcesJar by tasks.creating(Jar::class) {
-    archiveClassifier.set("sources")
-    from(android.sourceSets["main"].java.srcDirs)
-}
-
-val javadoc by tasks.creating(Javadoc::class) {
-    source(android.sourceSets["main"].java.srcDirs)
-    classpath += project.files(android.bootClasspath.joinToString(File.pathSeparator))
-}
-
-val javadocJar by tasks.creating(Jar::class) {
-    archiveClassifier.set("javadoc")
-    from(javadoc.destinationDir)
-}
-
-artifacts {
-    archives(sourcesJar)
-    archives(javadocJar)
-}
-
 dependencies {
     androidTestImplementation("androidx.test:runner:1.6.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
@@ -110,122 +83,39 @@ tasks.whenTaskAdded {
     }
 }
 
-// Stub secrets to let the project sync and build without the publication values set up
-ext["signing.keyId"] = null
-ext["signing.password"] = null
-ext["signing.secretKeyRingFile"] = null
-ext["ossrhUsername"] = null
-ext["ossrhPassword"] = null
-
-// Grabbing secrets from local.properties file or from environment variables, which could be used on CI
-val secretPropsFile = project.rootProject.file("local.properties")
-if (secretPropsFile.exists()) {
-    secretPropsFile.reader().use {
-        Properties().apply {
-            load(it)
-        }
-    }.onEach { (name, value) ->
-        ext[name.toString()] = value
-    }
-} else {
-    ext["signing.keyId"] = System.getenv("SIGNING_KEY_ID")
-    ext["signing.password"] = System.getenv("SIGNING_PASSWORD")
-    ext["signing.secretKeyRingFile"] = System.getenv("SIGNING_SECRET_KEY_RING_FILE")
-    ext["ossrhUsername"] = System.getenv("OSSRH_USERNAME")
-    ext["ossrhPassword"] = System.getenv("OSSRH_PASSWORD")
+mavenPublishing {
+    publishToMavenCentral()
+    signAllPublications()
 }
 
-fun getExtraString(name: String) = ext[name]?.toString()
+mavenPublishing {
+    coordinates(artifactId = "rocksdb-android")
 
-afterEvaluate {
-    val publishTasks = mutableListOf<BundleAar>()
-
-    android.libraryVariants.all { variant ->
-        val name = variant.buildType.name
-        if (name != com.android.builder.core.BuilderConstants.DEBUG) {
-            val task = project.tasks.getByName<BundleAar>("bundle${name.uppercaseFirstChar()}Aar") {
-                dependsOn(variant.javaCompileProvider)
-                dependsOn(variant.externalNativeBuildProviders)
-                from(variant.javaCompileProvider.get().destinationDirectory)
-                from("${layout.buildDirectory.asFile.get().absolutePath}/intermediates/library_and_local_jars_jni/$name/jni") {
-                    include("**/*.so")
-                    into("lib")
-                }
-            }
-            publishTasks.add(task)
-            artifacts.add("archives", task)
-        }
-        true
-    }
-
-    publishing {
-        repositories {
-            maven {
-                name = "sonatype"
-                if (version.toString().endsWith("-SNAPSHOT")) {
-                    setUrl("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-                } else {
-                    setUrl("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-                }
-                credentials {
-                    username = getExtraString("ossrhUsername")
-                    password = getExtraString("ossrhPassword")
-                }
+    pom {
+        name.set("rocksdb-android")
+        description.set("Android RocksDB library")
+        inceptionYear.set("2019")
+        url.set("https://github.com/marykdb/rocksdb-android")
+        licenses {
+            license {
+                name.set("The Apache License, Version 2.0")
+                url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+                distribution.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
             }
         }
 
-        publications {
-            register<MavenPublication>("RocksDB-Android").configure {
-                artifact(sourcesJar)
-                artifact(javadocJar)
-                publishTasks.forEach(::artifact)
-                groupId = project.group as String
-                artifactId = "rocksdb-android"
-                version = project.version as String
-
-                //The publication doesn't know about our dependencies, so we have to manually add them to the pom
-                pom.withXml {
-                    val dependenciesNode = asNode().appendNode("dependencies")
-
-                    //Iterate over the compile dependencies (we don't want the test ones), adding a <dependency> node for each
-                    configurations.implementation.get().allDependencies.forEach {
-                        dependenciesNode.appendNode ("dependency").apply {
-                            appendNode("groupId", it.group)
-                            appendNode("artifactId", it.name)
-                            appendNode("version", it.version)
-                        }
-                    }
-                }
+        developers {
+            developer {
+                id.set("jurmous")
+                name.set("Jurriaan Mous")
+                url.set("https://github.com/jurmous/")
             }
         }
 
-        publications.withType<MavenPublication> {
-            pom {
-                name.set(project.name)
-                description.set("Android RocksDB library")
-                url.set("https://github.com/marykdb/rocksdb-android")
-
-                licenses {
-                    license {
-                        name.set("The Apache Software License, Version 2.0")
-                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                        distribution.set("repo")
-                    }
-                }
-                developers {
-                    developer {
-                        id.set("jurmous")
-                        name.set("Jurriaan Mous")
-                    }
-                }
-                scm {
-                    url.set("https://github.com/marykdb/rocksdb-android.git")
-                }
-            }
+        scm {
+            url.set("https://github.com/marykdb/rocksdb-android")
+            connection.set("scm:git:git://github.com/marykdb/rocksdb-android.git")
+            developerConnection.set("scm:git:ssh://git@github.com/marykdb/rocksdb-android.git")
         }
-    }
-
-    signing {
-        sign(publishing.publications)
     }
 }
