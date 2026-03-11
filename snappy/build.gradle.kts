@@ -4,12 +4,16 @@ plugins {
     id("com.android.library")
 }
 
+val snappyVersion = "1.2.2"
+val snappySha = "90f74bc1fbf78a6c56b3c4a082a05103b3a56bb17bca1a27e052ea11723292dc"
+
 group = "io.maryk.snappy"
-version = "1.2.1"
+version = snappyVersion
 
 android {
     namespace = "snappy"
     compileSdk = 36
+    ndkVersion = "27.0.12077973"
     defaultConfig {
         minSdk = 21
         externalNativeBuild {
@@ -28,7 +32,7 @@ android {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
     externalNativeBuild {
@@ -39,9 +43,9 @@ android {
     }
 }
 
-val downloadSnappy by tasks.creating(Exec::class) {
+val downloadSnappy = tasks.register<Exec>("downloadSnappy") {
     workingDir = projectDir
-    commandLine("./downloadSnappy.sh", version)
+    commandLine("./downloadSnappy.sh", snappyVersion, snappySha)
 }
 
 tasks.withType<com.android.build.gradle.tasks.ExternalNativeBuildJsonTask> {

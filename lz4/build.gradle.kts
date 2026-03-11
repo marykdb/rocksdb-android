@@ -14,6 +14,7 @@ val lz4Home = projectDir.resolve("lz4/lz4-$lz4Version")
 android {
     namespace = "lz4"
     compileSdk = 36
+    ndkVersion = "27.0.12077973"
     defaultConfig {
         minSdk = 21
         externalNativeBuild {
@@ -26,7 +27,7 @@ android {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
     externalNativeBuild {
@@ -37,7 +38,7 @@ android {
     }
 }
 
-val downloadLz4 by tasks.creating(Exec::class) {
+val downloadLz4 = tasks.register<Exec>("downloadLz4") {
     workingDir = projectDir
     commandLine("./downloadLz4.sh", lz4Version)
 }

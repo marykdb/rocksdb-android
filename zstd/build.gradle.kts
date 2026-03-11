@@ -15,6 +15,7 @@ val zstdHome = projectDir.resolve("zstd-$zstdVersion")
 android {
     namespace = "zstd"
     compileSdk = 36
+    ndkVersion = "27.0.12077973"
     defaultConfig {
         minSdk = 21
         externalNativeBuild {
@@ -27,7 +28,7 @@ android {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
     externalNativeBuild {
@@ -38,7 +39,7 @@ android {
     }
 }
 
-val downloadZstd by tasks.creating(Exec::class) {
+val downloadZstd = tasks.register<Exec>("downloadZstd") {
     workingDir = projectDir
     commandLine("./downloadZstd.sh", zstdVersion, zstdSha)
 }

@@ -15,6 +15,7 @@ val bz2Home = projectDir.resolve("bzip2-$bz2Version")
 android {
     namespace = "bz2"
     compileSdk = 36
+    ndkVersion = "27.0.12077973"
     defaultConfig {
         minSdk = 21
         externalNativeBuild {
@@ -27,7 +28,7 @@ android {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
     externalNativeBuild {
@@ -38,7 +39,7 @@ android {
     }
 }
 
-val downloadBz2 by tasks.creating(Exec::class) {
+val downloadBz2 = tasks.register<Exec>("downloadBz2") {
     workingDir = projectDir
     commandLine("./downloadBz2.sh", bz2Version, bz2Sha)
 }

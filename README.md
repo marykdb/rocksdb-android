@@ -12,7 +12,7 @@ To use RocksDB in your Android project, add the following dependency to your bui
 
 Gradle:
 ```kts
-implementation("io.maryk.rocksdb:rocksdb-android:10.4.2")
+implementation("io.maryk.rocksdb:rocksdb-android:10.5.5")
 ```
 
 ## Reference
