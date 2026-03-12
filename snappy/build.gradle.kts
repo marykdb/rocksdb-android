@@ -13,7 +13,7 @@ version = snappyVersion
 android {
     namespace = "snappy"
     compileSdk = 36
-    ndkVersion = "27.0.12077973"
+    ndkVersion = "29.0.14206865"
     defaultConfig {
         minSdk = 21
         externalNativeBuild {
