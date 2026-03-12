@@ -21,7 +21,13 @@ android {
         externalNativeBuild {
             cmake {
                 targets.add("bz2")
-                arguments.add("-DBZ2_PATH=${bz2Home.absolutePath}")
+                arguments.addAll(
+                    listOf(
+                        "-DBZ2_PATH=${bz2Home.absolutePath}",
+                        "-DCMAKE_WARN_DEPRECATED=FALSE",
+                        "-Wno-dev",
+                    )
+                )
             }
         }
     }

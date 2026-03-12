@@ -21,7 +21,13 @@ android {
         externalNativeBuild {
             cmake {
                 targets.add("libzstd_shared")
-                arguments.add("-DZSTD_BUILD_SHARED=ON")
+                arguments.addAll(
+                    listOf(
+                        "-DZSTD_BUILD_SHARED=ON",
+                        "-DCMAKE_WARN_DEPRECATED=FALSE",
+                        "-Wno-dev",
+                    )
+                )
             }
         }
     }

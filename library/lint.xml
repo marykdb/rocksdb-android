@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="NewApi">
+        <ignore path="../rocksdb/java/src/main/java/org/rocksdb/ColumnFamilyOptions.java" />
+        <ignore path="../rocksdb/java/src/main/java/org/rocksdb/DBOptions.java" />
+        <ignore path="../rocksdb/java/src/main/java/org/rocksdb/NativeLibraryLoader.java" />
+        <ignore path="../rocksdb/java/src/main/java/org/rocksdb/Options.java" />
+    </issue>
+</lint>

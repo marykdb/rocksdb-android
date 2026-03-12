@@ -20,7 +20,13 @@ android {
         externalNativeBuild {
             cmake {
                 targets.add("liblz4")
-                arguments.add("-DLZ4_PATH=${lz4Home.absolutePath}/lib/")
+                arguments.addAll(
+                    listOf(
+                        "-DLZ4_PATH=${lz4Home.absolutePath}/lib/",
+                        "-DCMAKE_WARN_DEPRECATED=FALSE",
+                        "-Wno-dev",
+                    )
+                )
             }
         }
     }

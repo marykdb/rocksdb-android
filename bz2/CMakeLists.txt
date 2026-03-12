@@ -32,6 +32,10 @@ target_compile_definitions(bz2 PRIVATE _FILE_OFFSET_BITS=64)
 # Set the output name to 'bz2'
 set_target_properties(bz2 PROPERTIES OUTPUT_NAME "bz2")
 
+if(ANDROID)
+    target_link_options(bz2 PRIVATE "-Wl,-z,max-page-size=16384")
+endif()
+
 # Installation rules (optional)
 install(TARGETS bz2
         LIBRARY DESTINATION lib

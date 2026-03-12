@@ -24,6 +24,7 @@ android {
                     "-DBUILD_SHARED_LIBS=1",
                     "-DSNAPPY_HAVE_NEON=OFF",
                     "-DSNAPPY_BUILD_TESTS=OFF",
+                    "-DCMAKE_WARN_DEPRECATED=FALSE",
                     "-Wno-dev",
                 ))
             }

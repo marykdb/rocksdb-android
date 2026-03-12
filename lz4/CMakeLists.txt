@@ -1,8 +1,7 @@
+cmake_minimum_required (VERSION 3.10)
 PROJECT(LZ4 C)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "LZ4 compression library")
 include(CPack)
-
-cmake_minimum_required (VERSION 3.10)
 INCLUDE (CheckTypeSize)
 check_type_size("void *" SIZEOF_VOID_P)
 IF(${SIZEOF_VOID_P} STREQUAL "8")
