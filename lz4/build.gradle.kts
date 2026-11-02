@@ -5,6 +5,7 @@ plugins {
 }
 
 val lz4Version = "1.10.0"
+val lz4Sha = "537512904744b35e232912055ccf8ec66d768639ff3abe5788d90d792ec5f48b"
 
 group = "io.maryk.lz4"
 version = lz4Version
@@ -46,7 +47,7 @@ android {
 
 val downloadLz4 = tasks.register<Exec>("downloadLz4") {
     workingDir = projectDir
-    commandLine("./downloadLz4.sh", lz4Version)
+    commandLine("./downloadLz4.sh", lz4Version, lz4Sha)
 }
 
 tasks.withType<com.android.build.gradle.tasks.ExternalNativeBuildJsonTask> {
