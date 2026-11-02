@@ -12,7 +12,7 @@ To use RocksDB in your Android project, add the following dependency to your bui
 
 Gradle:
 ```kts
-implementation("io.maryk.rocksdb:rocksdb-android:10.10.1")
+implementation("io.maryk.rocksdb:rocksdb-android:11.8.1")
 ```
 
 ## Reference
@@ -22,3 +22,9 @@ implementation("io.maryk.rocksdb:rocksdb-android:10.10.1")
 ## License
 
 This project is licensed under the Apache License, Version 2.0 - see the [LICENSE file](LICENSE) for details.
+
+## Building
+
+Use JDK 17 or newer and the Gradle wrapper. The Android build uses SDK 36,
+NDK 29.0.14206865, and CMake 3.31.3. Initialize the pinned RocksDB sources with
+`git submodule update --init` before running `./gradlew :library:assembleRelease`.

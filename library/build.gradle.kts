@@ -4,15 +4,16 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     id("com.android.library")
-    id("com.vanniktech.maven.publish") version "0.36.0"
+    id("com.vanniktech.maven.publish") version "0.37.0"
 }
 
 group = "io.maryk.rocksdb"
-version = "10.10.1"
+version = "11.8.1"
 
 android {
     namespace = "org.rocksdb"
     compileSdk = 36
+    testBuildType = "release"
     ndkVersion = "29.0.14206865"
     defaultConfig {
         minSdk = 21

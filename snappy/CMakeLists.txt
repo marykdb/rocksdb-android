@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.10)
 
-add_subdirectory(snappy-1.2.1 snappy)
+add_subdirectory(snappy-1.3.1 snappy)
 
 # RocksDB uses RTTI for snappy::Sink (typeinfo symbol), but upstream snappy
 # forces -fno-rtti. Re-enable RTTI for this target to satisfy shared linking.

@@ -4,8 +4,8 @@ plugins {
     id("com.android.library")
 }
 
-val snappyVersion = "1.2.2"
-val snappySha = "90f74bc1fbf78a6c56b3c4a082a05103b3a56bb17bca1a27e052ea11723292dc"
+val snappyVersion = "1.3.1"
+val snappySha = "893f708a0bf4b5529d555ffcee390e940e932fcf90261f682604475a76cd0247"
 
 group = "io.maryk.snappy"
 version = snappyVersion
